@@ -75,7 +75,7 @@ export default function OddsTable({ data, visibleBooks, bankroll, kellyMultiplie
             return (
               <tr
                 key={row.id}
-                className={getEVRowClass(row.original.edgePct)}
+                className={getEVRowClass(row.original.edgePct ?? 0)}
                 style={{ height: vi.size }}
               >
                 {row.getVisibleCells().map((cell) => (

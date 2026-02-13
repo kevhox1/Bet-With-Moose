@@ -84,7 +84,7 @@ export function buildColumns({ visibleBooks, bankroll, kellyMultiplier }: Column
         if (!bankroll) {
           return <Link href="/profile" style={{ fontSize: '0.75rem' }}>Set bankroll →</Link>;
         }
-        const amount = calculateKellyBetSize(bankroll, row.original.kellyFraction, row.original.edgePct, kellyMultiplier);
+        const amount = calculateKellyBetSize(bankroll, row.original.kellyFraction ?? 0, row.original.edgePct ?? 0, kellyMultiplier);
         if (amount <= 0) return <span style={{ color: 'var(--text-muted)' }}>—</span>;
         return <span className="odds-cell">${amount.toFixed(0)}</span>;
       },

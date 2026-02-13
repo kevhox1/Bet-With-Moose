@@ -13,10 +13,10 @@ def health():
     return {"status": "ok", "version": "1.0.0"}
 
 
-@app.post("/v1/fair-value", response_model=FairValueResponse)
+@app.post("/v1/fair-value")
 def fair_value(request: FairValueRequest):
-    results = []
-    for market in request.markets:
+    results = {}
+    for i, market in enumerate(request.markets):
         # Convert Pydantic models to plain dicts for processing
         book_odds = {k: {"price": v.price} for k, v in market.book_odds.items()}
         opposite_odds = None
@@ -32,6 +32,7 @@ def fair_value(request: FairValueRequest):
             "opposite_odds": opposite_odds,
         }
         result = process_market(market_dict)
-        results.append(MarketResult(**result))
+        # Key by index so the caller (Node server) can map back via keyMap
+        results[str(i)] = result
 
-    return FairValueResponse(results=results)
+    return {"results": results}

@@ -90,6 +90,10 @@ export interface FairValueResult {
   edge_pct: number;
   kelly_fraction: number;
   calc_type: string;
+  best_book: string;
+  best_odds: number;
+  coverage: number;
+  confidence_multiplier: number;
 }
 
 export interface FairValueResponse {

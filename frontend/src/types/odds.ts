@@ -15,10 +15,10 @@ export interface OddsRow {
   books: { [sportsbook: string]: BookOdds };
   bestBook: string;
   bestOdds: number;
-  fairOdds: number;
-  fairProbability: number;
-  edgePct: number;
-  kellyFraction: number;
+  fairOdds: number | null;
+  fairProbability: number | null;
+  edgePct: number | null;
+  kellyFraction: number | null;
   coverage: number;
   calcType: string;
   lastUpdated: string;

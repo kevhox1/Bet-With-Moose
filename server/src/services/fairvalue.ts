@@ -3,7 +3,6 @@ import {
   AggregatedProp,
   OppositeOddsLookup,
   FairValueRequest,
-  FairValueResponse,
   FairValueResult,
 } from '../types/odds';
 
@@ -65,8 +64,14 @@ export async function fetchFairValues(
       return null;
     }
 
-    const data = (await resp.json()) as FairValueResponse;
-    return data.results ?? null;
+    const data = (await resp.json()) as { results: Record<string, FairValueResult> };
+    // Map indexed results back to propKeys
+    const mapped: Record<string, FairValueResult> = {};
+    for (const [idx, result] of Object.entries(data.results ?? {})) {
+      const key = keyMap[parseInt(idx, 10)];
+      if (key) mapped[key] = result as FairValueResult;
+    }
+    return mapped;
   } catch (err: any) {
     if (err?.name === 'AbortError') {
       console.error('[FairValue] Request timed out');

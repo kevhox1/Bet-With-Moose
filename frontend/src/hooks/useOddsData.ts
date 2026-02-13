@@ -19,11 +19,11 @@ export function useOddsData(filters: FilterOptions) {
     let filtered = rows;
 
     if (!filters.showNegativeEV) {
-      filtered = filtered.filter((r) => r.edgePct > 0);
+      filtered = filtered.filter((r) => (r.edgePct ?? 0) > 0);
     }
 
     if (filters.minEdge > 0) {
-      filtered = filtered.filter((r) => r.edgePct >= filters.minEdge);
+      filtered = filtered.filter((r) => (r.edgePct ?? 0) >= filters.minEdge);
     }
 
     if (filters.game) {
