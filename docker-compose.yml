@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  node-server:
+    build: ./server
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - redis
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://moose:moose@postgres:5432/moosebets
+      REDIS_URL: redis://redis:6379
+      CALCULATOR_SERVICE_URL: http://python-calculator:8001
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+  python-calculator:
+    build: ./calculator
+    expose:
+      - "8001"
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://moose:moose@postgres:5432/moosebets
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - ./calculator:/app
+
+  postgres:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: moose
+      POSTGRES_PASSWORD: moose
+      POSTGRES_DB: moosebets
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/migrations:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  redisdata:
