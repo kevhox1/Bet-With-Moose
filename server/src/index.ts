@@ -18,10 +18,44 @@ async function main(): Promise<void> {
   const db = new Pool({ connectionString: config.databaseUrl });
   db.on('error', (err) => console.error('[PG] Pool error:', err.message));
 
-  // Test DB connection
+  // Test DB connection & run migrations
   try {
     await db.query('SELECT 1');
     console.log('[PG] Connected');
+
+    // Auto-create tables if they don't exist
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        email VARCHAR(255) UNIQUE NOT NULL,
+        name VARCHAR(255),
+        password_hash VARCHAR(255),
+        google_id VARCHAR(255),
+        subscription_status VARCHAR(50) DEFAULT 'free',
+        stripe_customer_id VARCHAR(255),
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE TABLE IF NOT EXISTS user_preferences (
+        user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+        preferred_sportsbooks TEXT[] DEFAULT '{}',
+        bankroll DECIMAL(12,2),
+        kelly_fraction DECIMAL(4,3) DEFAULT 0.250,
+        min_edge DECIMAL(5,3) DEFAULT 0.000,
+        min_coverage INTEGER DEFAULT 3,
+        display_mode VARCHAR(50) DEFAULT 'default',
+        show_negative_ev BOOLEAN DEFAULT false,
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE TABLE IF NOT EXISTS sessions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        session_token VARCHAR(255) UNIQUE NOT NULL,
+        expires_at TIMESTAMPTZ NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+    console.log('[PG] Migrations complete');
   } catch (err: any) {
     console.warn('[PG] Not available (auth routes will fail):', err?.message);
   }
