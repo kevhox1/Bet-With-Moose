@@ -26,7 +26,9 @@ export function buildColumns({ visibleBooks, bankroll, kellyMultiplier, state }:
         const v = getValue() as string | null;
         if (!v) return '—';
         const d = new Date(v);
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const time = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        return `${date} ${time}`;
       },
     },
     { accessorKey: 'player', header: 'Player', size: 130 },
