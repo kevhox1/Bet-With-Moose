@@ -30,4 +30,8 @@ export function registerOddsRoutes(app: FastifyInstance): void {
   app.get('/api/health', async (_request, reply) => {
     return reply.send({ status: 'ok', timestamp: new Date().toISOString() });
   });
+
+  app.get('/health', async (_request, reply) => {
+    return reply.send({ status: 'ok', timestamp: new Date().toISOString() });
+  });
 }

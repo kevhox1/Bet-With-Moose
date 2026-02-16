@@ -3,18 +3,34 @@ import bcrypt from 'bcryptjs';
 import { Pool } from 'pg';
 import { signToken, authMiddleware } from '../middleware/auth';
 
+function sanitize(str: string): string {
+  return str.replace(/<[^>]*>/g, '').trim();
+}
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export function registerAuthRoutes(app: FastifyInstance, db: Pool): void {
+  const authRateLimit = { config: { rateLimit: { max: 10, timeWindow: '1 minute' } } };
+
   // Register
   app.post<{ Body: { name?: string; email: string; password: string } }>(
     '/api/auth/register',
+    authRateLimit,
     async (request, reply) => {
       try {
-        const { name, email, password } = request.body ?? {};
+        let { name, email, password } = request.body ?? {};
         if (!email || !password) {
           return reply.status(400).send({ error: 'Email and password are required' });
         }
+        if (!EMAIL_REGEX.test(email)) {
+          return reply.status(400).send({ error: 'Invalid email format' });
+        }
         if (password.length < 8) {
           return reply.status(400).send({ error: 'Password must be at least 8 characters' });
+        }
+        // Sanitize name
+        if (name) {
+          name = sanitize(name).slice(0, 100);
         }
 
         // Check existing
@@ -50,6 +66,7 @@ export function registerAuthRoutes(app: FastifyInstance, db: Pool): void {
   // Login
   app.post<{ Body: { email: string; password: string } }>(
     '/api/auth/login',
+    authRateLimit,
     async (request, reply) => {
       try {
         const { email, password } = request.body ?? {};

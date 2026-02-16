@@ -1,5 +1,6 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import rateLimit from '@fastify/rate-limit';
 import { Pool } from 'pg';
 import { config } from './config/env';
 import { connectRedis, disconnectRedis } from './services/redis';
@@ -13,6 +14,9 @@ async function main(): Promise<void> {
   // Fastify
   const app = Fastify({ logger: false });
   await app.register(cors, { origin: true });
+  await app.register(rateLimit, {
+    global: false, // only apply where specified
+  });
 
   // PostgreSQL
   const db = new Pool({ connectionString: config.databaseUrl });

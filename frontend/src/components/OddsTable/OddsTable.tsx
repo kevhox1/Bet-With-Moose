@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { OddsRow, KellyMultiplier } from '@/types/odds';
 import { buildColumns } from './columns';
 import { getEVRowClass } from './EVHighlight';
+import { useOddsStore } from '@/hooks/useWebSocket';
 
 interface OddsTableProps {
   data: OddsRow[];
@@ -17,6 +18,7 @@ interface OddsTableProps {
 export default function OddsTable({ data, visibleBooks, bankroll, kellyMultiplier }: OddsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'edgePct', desc: true }]);
   const parentRef = useRef<HTMLDivElement>(null);
+  const allRows = useOddsStore((s) => s.rows);
 
   const columns = useMemo(
     () => buildColumns({ visibleBooks, bankroll, kellyMultiplier }),
@@ -45,7 +47,11 @@ export default function OddsTable({ data, visibleBooks, bankroll, kellyMultiplie
     return (
       <div className="card" style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-muted)' }}>
         <p style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>No +EV bets found</p>
-        <p style={{ fontSize: '0.85rem' }}>Try adjusting your filters or check back later.</p>
+        <p style={{ fontSize: '0.85rem' }}>
+          {allRows.length > 0
+            ? `${allRows.length.toLocaleString()} props available but no edges match your filters. Toggle "Show All" to browse raw odds.`
+            : 'Try adjusting your filters or check back later.'}
+        </p>
       </div>
     );
   }

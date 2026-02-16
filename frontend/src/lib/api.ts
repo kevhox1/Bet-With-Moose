@@ -12,7 +12,7 @@ async function request(path: string, options: RequestInit = {}) {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: res.statusText }));
-    throw new Error(err.message || 'Request failed');
+    throw new Error(err.error || err.message || 'Request failed');
   }
   return res.json();
 }
