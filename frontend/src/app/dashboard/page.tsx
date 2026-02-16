@@ -43,6 +43,7 @@ export default function DashboardPage() {
     market: filters.market || undefined,
     minEdge: filters.minEdge,
     showNegativeEV: filters.showNegativeEV,
+    selectedBooks: filters.selectedBooks,
   });
 
   const { games, markets, books } = useUniqueValues();

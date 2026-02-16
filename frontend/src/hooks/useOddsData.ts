@@ -18,6 +18,13 @@ export function useOddsData(filters: FilterOptions) {
   return useMemo(() => {
     let filtered = rows;
 
+    // If books are selected, only show rows that have odds from at least one selected book
+    if (filters.selectedBooks && filters.selectedBooks.length > 0) {
+      filtered = filtered.filter((r) =>
+        filters.selectedBooks!.some((book) => book in r.books)
+      );
+    }
+
     if (!filters.showNegativeEV) {
       filtered = filtered.filter((r) => (r.edgePct ?? 0) > 0);
     }

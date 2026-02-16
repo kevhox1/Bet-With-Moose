@@ -103,7 +103,7 @@ export function registerUserRoutes(app: FastifyInstance, db: Pool): void {
              updated_at = NOW()`,
           [
             request.user!.userId,
-            preferred_sportsbooks ? JSON.stringify(preferred_sportsbooks) : null,
+            preferred_sportsbooks ?? null,
             bankroll ?? null,
             kelly_fraction ?? null,
             min_edge ?? null,
