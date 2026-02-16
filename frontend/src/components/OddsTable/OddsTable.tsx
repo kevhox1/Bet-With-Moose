@@ -41,7 +41,7 @@ export default function OddsTable({ data, visibleBooks, bankroll, kellyMultiplie
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 28,
+    estimateSize: () => 22,
     overscan: 20,
   });
 
