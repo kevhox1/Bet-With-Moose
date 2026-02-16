@@ -18,10 +18,24 @@ export default function DashboardPage() {
     game: '',
     player: '',
     market: '',
-    minEdge: 0,
-    showNegativeEV: false,
-    selectedBooks: [] as string[],
+    minEdge: preferences.minEdge ?? 0,
+    showNegativeEV: preferences.showNegativeEV ?? false,
+    selectedBooks: preferences.preferredBooks ?? [] as string[],
   });
+
+  // Sync when preferences load from server
+  const [prefsLoaded, setPrefsLoaded] = useState(false);
+  useEffect(() => {
+    if (!prefsLoaded && isAuthenticated && (preferences.minEdge !== 0 || preferences.showNegativeEV || preferences.preferredBooks.length > 0)) {
+      setFilters((prev) => ({
+        ...prev,
+        minEdge: preferences.minEdge ?? prev.minEdge,
+        showNegativeEV: preferences.showNegativeEV ?? prev.showNegativeEV,
+        selectedBooks: preferences.preferredBooks.length > 0 ? preferences.preferredBooks : prev.selectedBooks,
+      }));
+      setPrefsLoaded(true);
+    }
+  }, [preferences, isAuthenticated, prefsLoaded]);
 
   const filteredData = useOddsData({
     game: filters.game || undefined,
