@@ -18,11 +18,21 @@ export function useOddsData(filters: FilterOptions) {
   return useMemo(() => {
     let filtered = rows;
 
-    // If books are selected, only show rows that have odds from at least one selected book
+    // If books are selected, only show rows where the best odds come from a selected book
     if (filters.selectedBooks && filters.selectedBooks.length > 0) {
-      filtered = filtered.filter((r) =>
-        filters.selectedBooks!.some((book) => book in r.books)
-      );
+      filtered = filtered.filter((r) => {
+        // Find the best book among the selected books
+        let bestPrice = -Infinity;
+        let hasBet = false;
+        for (const book of filters.selectedBooks!) {
+          const data = r.books[book];
+          if (data && data.price !== 0) {
+            hasBet = true;
+            if (data.price > bestPrice) bestPrice = data.price;
+          }
+        }
+        return hasBet;
+      });
     }
 
     if (!filters.showNegativeEV) {
