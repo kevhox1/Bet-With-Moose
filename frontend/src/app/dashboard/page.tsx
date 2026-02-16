@@ -86,6 +86,7 @@ export default function DashboardPage() {
           bankroll={preferences.bankroll}
           kellyMultiplier={preferences.kellyFraction}
           state={preferences.state}
+          selectedBooks={filters.selectedBooks}
         />
       </div>
     </>
