@@ -17,6 +17,18 @@ interface ColumnOptions {
 export function buildColumns({ visibleBooks, bankroll, kellyMultiplier, state }: ColumnOptions): ColumnDef<OddsRow, unknown>[] {
   const base: ColumnDef<OddsRow, unknown>[] = [
     { accessorKey: 'game', header: 'Game', size: 140 },
+    {
+      id: 'gameDate',
+      header: 'Date',
+      size: 80,
+      accessorFn: (row) => row.gameDate,
+      cell: ({ getValue }) => {
+        const v = getValue() as string | null;
+        if (!v) return '—';
+        const d = new Date(v);
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      },
+    },
     { accessorKey: 'player', header: 'Player', size: 130 },
     {
       id: 'betType',
