@@ -43,6 +43,7 @@ export function registerUserRoutes(app: FastifyInstance, db: Pool): void {
             min_coverage: 3,
             display_mode: 'default',
             show_negative_ev: false,
+            state: 'ny',
           });
         }
         return reply.send(result.rows[0]);
@@ -63,6 +64,7 @@ export function registerUserRoutes(app: FastifyInstance, db: Pool): void {
       min_coverage?: number;
       display_mode?: string;
       show_negative_ev?: boolean;
+      state?: string;
     };
   }>(
     '/api/user/preferences',
@@ -77,16 +79,18 @@ export function registerUserRoutes(app: FastifyInstance, db: Pool): void {
           min_coverage,
           display_mode,
           show_negative_ev,
+          state,
         } = request.body ?? {};
 
-        // Add show_negative_ev column if it doesn't exist
+        // Add new columns if they don't exist
         await db.query(`
-          ALTER TABLE user_preferences ADD COLUMN IF NOT EXISTS show_negative_ev BOOLEAN DEFAULT false
+          ALTER TABLE user_preferences ADD COLUMN IF NOT EXISTS show_negative_ev BOOLEAN DEFAULT false;
+          ALTER TABLE user_preferences ADD COLUMN IF NOT EXISTS state VARCHAR(5) DEFAULT 'ny';
         `).catch(() => {});
 
         await db.query(
-          `INSERT INTO user_preferences (user_id, preferred_sportsbooks, bankroll, kelly_fraction, min_edge, min_coverage, display_mode, show_negative_ev)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+          `INSERT INTO user_preferences (user_id, preferred_sportsbooks, bankroll, kelly_fraction, min_edge, min_coverage, display_mode, show_negative_ev, state)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
            ON CONFLICT (user_id) DO UPDATE SET
              preferred_sportsbooks = COALESCE($2, user_preferences.preferred_sportsbooks),
              bankroll = COALESCE($3, user_preferences.bankroll),
@@ -95,6 +99,7 @@ export function registerUserRoutes(app: FastifyInstance, db: Pool): void {
              min_coverage = COALESCE($6, user_preferences.min_coverage),
              display_mode = COALESCE($7, user_preferences.display_mode),
              show_negative_ev = COALESCE($8, user_preferences.show_negative_ev),
+             state = COALESCE($9, user_preferences.state),
              updated_at = NOW()`,
           [
             request.user!.userId,
@@ -105,6 +110,7 @@ export function registerUserRoutes(app: FastifyInstance, db: Pool): void {
             min_coverage ?? null,
             display_mode ?? null,
             show_negative_ev ?? null,
+            state ?? null,
           ],
         );
 

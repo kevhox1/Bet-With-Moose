@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useAuthStore } from '@/hooks/useAuth';
-import { KellyMultiplier } from '@/types/odds';
+import { KellyMultiplier, US_STATES } from '@/types/odds';
 import BookSelector from './BookSelector';
 
 export default function PreferencesForm() {
@@ -25,6 +25,22 @@ export default function PreferencesForm() {
     <div className="profile-page">
       <h1>Preferences</h1>
       <div className="card">
+        <div className="form-group">
+          <label className="form-label">Your State</label>
+          <select
+            className="form-input form-select"
+            value={prefs.state}
+            onChange={(e) => setPrefs({ ...prefs, state: e.target.value })}
+          >
+            {Object.entries(US_STATES).map(([code, name]) => (
+              <option key={code} value={code}>{name}</option>
+            ))}
+          </select>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+            Used for sportsbook deep links (FanDuel, BetRivers, BetMGM, etc.)
+          </p>
+        </div>
+
         <BookSelector
           selected={prefs.preferredBooks}
           onChange={(preferredBooks) => setPrefs({ ...prefs, preferredBooks })}

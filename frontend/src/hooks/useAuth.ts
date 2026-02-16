@@ -21,6 +21,7 @@ const defaultPrefs: UserPreferences = {
   kellyFraction: 0.25 as KellyMultiplier,
   minEdge: 0,
   showNegativeEV: false,
+  state: 'ny',
 };
 
 export const useAuthStore = create<AuthState>((set, get) => ({

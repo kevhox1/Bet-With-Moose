@@ -13,15 +13,16 @@ interface OddsTableProps {
   visibleBooks: string[];
   bankroll: number | null;
   kellyMultiplier: KellyMultiplier;
+  state?: string;
 }
 
-export default function OddsTable({ data, visibleBooks, bankroll, kellyMultiplier }: OddsTableProps) {
+export default function OddsTable({ data, visibleBooks, bankroll, kellyMultiplier, state }: OddsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'edgePct', desc: true }]);
   const parentRef = useRef<HTMLDivElement>(null);
   const allRows = useOddsStore((s) => s.rows);
 
   const columns = useMemo(
-    () => buildColumns({ visibleBooks, bankroll, kellyMultiplier }),
+    () => buildColumns({ visibleBooks, bankroll, kellyMultiplier, state }),
     [visibleBooks, bankroll, kellyMultiplier]
   );
 

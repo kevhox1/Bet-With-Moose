@@ -43,7 +43,17 @@ export interface UserPreferences {
   kellyFraction: KellyMultiplier;
   minEdge: number;
   showNegativeEV: boolean;
+  state: string;
 }
+
+export const US_STATES: Record<string, string> = {
+  az: 'Arizona', co: 'Colorado', ct: 'Connecticut', dc: 'Washington DC',
+  il: 'Illinois', in: 'Indiana', ia: 'Iowa', ks: 'Kansas', ky: 'Kentucky',
+  la: 'Louisiana', ma: 'Massachusetts', md: 'Maryland', mi: 'Michigan',
+  mo: 'Missouri', nc: 'North Carolina', nh: 'New Hampshire', nj: 'New Jersey',
+  ny: 'New York', oh: 'Ohio', or: 'Oregon', pa: 'Pennsylvania', tn: 'Tennessee',
+  va: 'Virginia', vt: 'Vermont', wv: 'West Virginia', wy: 'Wyoming',
+};
 
 export const ALL_SPORTSBOOKS = [
   'DraftKings', 'FanDuel', 'BetMGM', 'Caesars', 'PointsBet',

@@ -31,6 +31,7 @@ export const api = {
       kellyFraction: raw.kelly_fraction ?? 0.25,
       minEdge: raw.min_edge ?? 0,
       showNegativeEV: raw.show_negative_ev ?? false,
+      state: raw.state ?? 'ny',
     };
   },
   updatePreferences: (prefs: Record<string, unknown>) =>
@@ -42,6 +43,7 @@ export const api = {
         kelly_fraction: prefs.kellyFraction,
         min_edge: prefs.minEdge,
         show_negative_ev: prefs.showNegativeEV,
+        state: prefs.state,
       }),
     }),
 };

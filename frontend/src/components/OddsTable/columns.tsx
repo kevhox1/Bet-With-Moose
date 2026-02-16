@@ -2,6 +2,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { OddsRow } from '@/types/odds';
 import { formatAmericanOdds, timeAgo } from '@/lib/formatting';
 import { calculateKellyBetSize } from '@/lib/kelly';
+import { rewriteLink } from '@/lib/stateLinks';
 import { KellyMultiplier } from '@/types/odds';
 import EVHighlight from './EVHighlight';
 import Link from 'next/link';
@@ -10,9 +11,10 @@ interface ColumnOptions {
   visibleBooks: string[];
   bankroll: number | null;
   kellyMultiplier: KellyMultiplier;
+  state?: string;
 }
 
-export function buildColumns({ visibleBooks, bankroll, kellyMultiplier }: ColumnOptions): ColumnDef<OddsRow, unknown>[] {
+export function buildColumns({ visibleBooks, bankroll, kellyMultiplier, state }: ColumnOptions): ColumnDef<OddsRow, unknown>[] {
   const base: ColumnDef<OddsRow, unknown>[] = [
     { accessorKey: 'game', header: 'Game', size: 140 },
     { accessorKey: 'player', header: 'Player', size: 130 },
@@ -43,7 +45,7 @@ export function buildColumns({ visibleBooks, bankroll, kellyMultiplier }: Column
       const isBest = row.original.bestBook === book;
       return (
         <span className={`odds-cell ${isBest ? 'best' : ''}`}>
-          <a href={bookData.link} target="_blank" rel="noopener noreferrer">
+          <a href={state ? rewriteLink(bookData.link, book, state) : bookData.link} target="_blank" rel="noopener noreferrer">
             {formatAmericanOdds(bookData.price)}
           </a>
         </span>
